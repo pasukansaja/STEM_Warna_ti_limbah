@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lab Maya - Warna ti Limbah</title>
+<style>
+body{margin:0;font-family:Arial,Calibri,sans-serif;background:#eaf3fb;color:#1c2b3a;font-size:14px;}
+header{background:#1f4e79;color:#fff;padding:10px 14px;}
+header h1{font-size:17px;margin:0 0 6px 0;}
+.badge{background:#ffd966;color:#5a4300;font-weight:bold;border-radius:999px;padding:3px 12px;font-size:13px;}
+#nav{margin-top:8px;}
+.tab{border:2px solid #fff;background:#2e74b5;color:#fff;border-radius:8px;padding:6px 9px;font-size:12px;font-weight:bold;cursor:pointer;margin:2px 2px 2px 0;}
+.tab.aktif{background:#ffd966;color:#1f3864;border-color:#ffd966;}
+.tab.lock{opacity:.45;cursor:not-allowed;}
+.statusbar{max-width:1100px;margin:10px auto 0;padding:7px 12px;background:#fff3cd;color:#7a5b00;border:1px solid #e0c96b;border-radius:8px;font-size:12.5px;width:calc(100% - 30px);}
+.statusbar.ok{background:#d9f2e3;color:#1e6b3a;border-color:#9fd8b4;}
+.wrap{width:calc(100% - 24px);max-width:1100px;margin:12px auto;padding:0;}
+.kiri{float:left;width:66%;}
+.kanan{float:right;width:32.5%;}
+.clear{clear:both;}
+@media(max-width:880px){.kiri,.kanan{width:100%;float:none;}}
+.panel{background:#fff;border:1px solid #dbe7f2;border-radius:14px;padding:14px;margin-bottom:12px;box-shadow:0 2px 8px rgba(31,78,121,.10);}
+.misi{display:none;}
+h2{color:#1f4e79;font-size:18px;margin:0 0 3px 0;}
+.sub{color:#5b6b7c;font-size:12.5px;margin:0 0 10px 0;}
+.card{background:#fdf6ee;border:2px solid #f0e2c8;border-radius:12px;padding:11px;margin:10px 0;}
+.card h3{color:#7f6000;font-size:14px;margin:0 0 8px 0;}
+.row{margin:9px 0;}
+.row label{display:block;font-weight:bold;font-size:13px;margin-bottom:3px;}
+input[type=range]{width:100%;}
+.val{background:#eef5fc;border-radius:6px;padding:1px 9px;font-weight:bold;color:#1f4e79;font-size:12.5px;}
+.btn{background:#2e74b5;color:#fff;border:none;border-radius:9px;padding:9px 15px;font-weight:bold;font-size:13px;cursor:pointer;margin:2px 4px 2px 0;}
+.btn:hover{filter:brightness(1.12);}
+.btn.hijau{background:#2b8a3e;}
+.btn.kuning{background:#f59f00;color:#4a3800;}
+.btn.merah{background:#e03131;}
+.btn:disabled{opacity:.4;cursor:not-allowed;}
+.info{background:#e7f5ff;border-left:5px solid #2e74b5;border-radius:8px;padding:8px 11px;font-size:12.5px;margin-top:9px;}
+.info.ijo{background:#eafaf0;border-color:#2b8a3e;}
+.info.merah{background:#fff0f0;border-color:#e03131;}
+.alatwrap{text-align:center;margin-top:12px;}
+.gelas{display:inline-block;width:140px;height:180px;border:4px solid #9db8cf;border-top:none;border-radius:0 0 24px 24px;position:relative;background:#f4f8fc;vertical-align:bottom;overflow:hidden;}
+.cair{position:absolute;bottom:0;left:0;right:0;height:0;transition:height 1s,background 1s;}
+.bubble{position:absolute;bottom:-12px;width:9px;height:9px;background:rgba(255,255,255,.75);border-radius:50%;
+ -webkit-animation:naik 1.6s linear infinite;animation:naik 1.6s linear infinite;}
+@-webkit-keyframes naik{from{top:100%;opacity:1}to{top:-20px;opacity:0}}
+@keyframes naik{from{top:100%;opacity:1}to{top:-20px;opacity:0}}
+.etiket{position:absolute;top:8px;left:50%;width:130px;margin-left:-65px;text-align:center;background:#fff;border:1px solid #cbd8e4;border-radius:6px;font-size:9.5px;padding:2px;color:#c0392b;font-weight:bold;}
+.kain{width:230px;height:230px;border:5px dashed #d9b382;border-radius:8px;position:relative;cursor:crosshair;background:#fdf6f0;display:inline-block;overflow:hidden;vertical-align:bottom;}
+.kaininfo{position:absolute;top:5px;left:7px;font-size:10px;color:#00000080;}
+.kainMini{width:120px;height:120px;border:4px dashed #d9b382;border-radius:8px;display:inline-block;background:#fdf6f0;font-size:30px;line-height:112px;text-align:center;vertical-align:bottom;}
+.awan{position:absolute;width:84px;height:34px;border-radius:17px;}
+.awan:before,.awan:after{content:"";position:absolute;background:inherit;border-radius:50%;}
+.awan:before{width:32px;height:32px;top:-15px;left:12px;}
+.awan:after{width:25px;height:25px;top:-9px;right:14px;}
+.ring{position:absolute;width:50px;height:50px;border-radius:50%;background:transparent;}
+.garisW{position:absolute;width:64px;height:10px;border-radius:5px;}
+.tabel{width:100%;border-collapse:collapse;font-size:12px;margin-top:8px;}
+.tabel th,.tabel td{border:1px solid #d5e1ec;padding:5px 7px;text-align:left;}
+.tabel th{background:#fdeccf;color:#5a4300;}
+.persen{height:13px;background:#e8eef4;border-radius:999px;overflow:hidden;margin:5px 0;}
+.persen div{height:100%;background:#37b24d;width:0;}
+.qs{font-weight:bold;font-size:13px;margin:10px 0 4px 0;}
+.op{display:block;background:#fdf6ee;border:2px solid #f0e2c8;border-radius:8px;padding:6px 9px;margin:4px 0;cursor:pointer;font-size:12.5px;}
+.op:hover{border-color:#2e74b5;}
+#report{width:100%;height:170px;font-family:Courier New,monospace;font-size:11px;border:1px solid #cbd8e4;border-radius:8px;padding:7px;}
+#daftarj{font-size:11.8px;max-height:330px;overflow:auto;}
+#daftarj div{padding:4px 4px;border-bottom:1px dashed #e2ebf3;}
+#toast{position:fixed;bottom:16px;left:50%;width:330px;margin-left:-165px;background:#1f3864;color:#fff;padding:10px 14px;border-radius:11px;font-size:13px;font-weight:bold;text-align:center;opacity:0;visibility:hidden;-webkit-transition:opacity .4s;transition:opacity .4s;z-index:99;}
+#toast.show{opacity:1;visibility:visible;}
+footer{max-width:1100px;margin:4px auto 24px;padding:0 14px;font-size:11px;color:#7d8a97;text-align:center;}
+details{background:#f4f8fd;border-radius:9px;padding:8px 12px;margin:10px 0;font-size:12.3px;}
+summary{cursor:pointer;font-weight:bold;color:#1f4e79;}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>&#129514; Lab Maya &mdash; <i>Warna ti Limbah</i> <span class="badge" id="skorB">&#11088; Skor: 0</span></h1>
+  <div id="nav">
+    <button class="tab aktif" id="tab1" onclick="tabGo(1)">1 Ekstraksi</button>
+    <button class="tab lock" id="tab2" onclick="tabGo(2)">2 Uji pH</button>
+    <button class="tab lock" id="tab3" onclick="tabGo(3)">3 Mordanting</button>
+    <button class="tab lock" id="tab4" onclick="tabGo(4)">4 Batik Mini</button>
+    <button class="tab lock" id="tab5" onclick="tabGo(5)">5 Uji &amp; Laporan</button>
+  </div>
+</header>
+
+<div class="statusbar" id="statusJS">&#8987; Memuat sistem&hellip; Jika tulisan ini tidak berubah menjadi &ldquo;&#9989; Sistem lab siap&rdquo;, berarti JavaScript belum berjalan (cek cara menyimpan file: akhiran .html, encoding UTF-8, buka dengan Chrome/Edge/Firefox).</div>
+
+<div class="wrap">
+<div class="kiri">
+
+<!-- ================= MISI 1 ================= -->
+<section class="misi" id="m1" style="display:block">
+<div class="panel">
+<h2>&#127777;&#65039; Misi 1 &mdash; Ekstraksi Pewarna dari Kulit Buah</h2>
+<p class="sub">Pilih limbah kulit buah dari kantin, atur kondisi ekstraksi, panaskan, lalu saring. Target: kekuatan warna <b>&ge; 80%</b>.</p>
+
+<div class="card"><h3>Langkah 1 &mdash; Pilih kulit buah (klik salah satu)</h3>
+  <div style="text-align:center">
+  <div class="kainMini" style="width:150px;height:auto;padding:10px 6px;cursor:pointer;border:3px solid transparent;font-size:14px;line-height:1.5;" id="b-manggis" onclick="pilihBuah('manggis')">&#128995;<br><b>Kulit Manggis</b><br><small>Antosianin<br>ungu&ndash;merah, peka pH</small></div>
+  <div class="kainMini" style="width:150px;height:auto;padding:10px 6px;cursor:pointer;border:3px solid transparent;font-size:14px;line-height:1.5;" id="b-naga" onclick="pilihBuah('naga')">&#127752;<br><b>Kulit Buah Naga</b><br><small>Betasianin<br>magenta, tahan panas</small></div>
+  <div class="kainMini" style="width:150px;height:auto;padding:10px 6px;cursor:pointer;border:3px solid transparent;font-size:14px;line-height:1.5;" id="b-jeruk" onclick="pilihBuah('jeruk')">&#127819;<br><b>Kulit Jeruk</b><br><small>Karotenoid<br>kuning, stabil</small></div>
+  </div>
+</div>
+
+<div class="card"><h3>Langkah 2 &mdash; Takar bahan (rasio bahan : air)</h3>
+  <div class="row"><label>&#128296; Massa kulit cincang: <span class="val" id="vMassa">100 g</span></label>
+  <input type="range" id="massa" min="40" max="200" step="10" value="100" oninput="upd()"></div>
+  <div class="row"><label>&#128167; Volume air panas: <span class="val" id="vAir">250 mL</span></label>
+  <input type="range" id="air" min="100" max="500" step="10" value="250" oninput="upd()"></div>
+  <div class="row"><label>&#128207; Rasio bahan : air = <span class="val" id="vRasio">1 : 2.5</span></label></div>
+  <div class="info" id="infoRasio">&#128161; Rasio ideal: <b>1 : 2 sampai 1 : 3</b>.</div>
+</div>
+
+<div class="card"><h3>Langkah 3 &mdash; Panaskan &amp; saring (di lab nyata: diawasi guru!)</h3>
+  <div class="row"><label>&#128293; Suhu: <span class="val" id="vSuhu">60 &deg;C</span></label>
+  <input type="range" id="suhu" min="30" max="100" step="5" value="60" oninput="upd()"></div>
+  <div class="row"><label>&#9201;&#65039; Durasi: <span class="val" id="vWaktu">15 menit</span></label>
+  <input type="range" id="waktu" min="5" max="40" step="1" value="15" oninput="upd()"></div>
+
+  <div class="alatwrap">
+    <div class="gelas"><div class="cair" id="cair1"></div><div class="etiket" id="etiket1">BELUM DIPANAS</div></div>
+    <div style="display:inline-block;vertical-align:bottom;padding:0 10px;">
+      <button class="btn merah" id="tStove" onclick="toggleStove()">&#128293; Nyalakan Kompor</button><br><br>
+      <button class="btn hijau" id="tSaring" onclick="saring()" disabled>&#129791; Saring Ekstrak</button>
+    </div>
+    <div class="gelas"><div class="cair" id="cair2"></div><div class="etiket" id="etiket2">EKSTRAK</div></div>
+  </div>
+  <div id="hasilE"></div>
+</div>
+<details><summary>&#128214; Petunjuk cepat Misi 1</summary>Pilih buah &rarr; geser slider hingga rasio 1:2&ndash;1:3 &rarr; suhu sekitar 70&ndash;80&deg;C &rarr; durasi 15&ndash;20 menit &rarr; Nyalakan Kompor &rarr; Saring. Nilai di luar rentang itu menurunkan kekuatan warna (persis seperti praktik nyata!).</details>
+</div>
+</section>
+
+<!-- ================= MISI 2 ================= -->
+<section class="misi" id="m2">
+<div class="panel">
+<h2>&#129514; Misi 2 &mdash; &ldquo;Sihir pH&rdquo;: Uji Indikator Alami</h2>
+<p class="sub">Ekstrak: <b id="nmE2">&mdash;</b>. Teteskan cuka (asam) atau larutan soda (basa) minimal <b>3&times;</b>, amati perubahan warna, lalu tekan <b>Catat</b>.</p>
+<div class="alatwrap">
+  <div class="gelas" style="height:200px"><div class="cair" id="cair3"></div><div class="etiket" id="etiket3">pH NETRAL</div></div>
+  <div style="display:inline-block;vertical-align:bottom;padding:0 10px;text-align:left;">
+    <button class="btn" onclick="tetes('asam')">&#127819; + Cuka (asam)</button><br><br>
+    <button class="btn kuning" onclick="tetes('basa')">&#129370; + Soda kue (basa)</button><br><br>
+    <button class="btn hijau" onclick="resetpH()">&#8634; Sampel baru</button>
+  </div>
+</div>
+<div class="card"><h3>Tabel Pengamatan (isi baris asli dulu sebelum menetes!)</h3>
+<table class="tabel">
+<tr><th>Kondisi</th><th>Warna teramati</th><th>Aksi</th></tr>
+<tr><td>Asli (netral)</td><td id="pH0">&mdash;</td><td><button class="btn" style="padding:4px 10px;font-size:11px" onclick="catat(0)">Catat</button></td></tr>
+<tr><td>+ Cuka (asam)</td><td id="pH1">&mdash;</td><td><button class="btn" style="padding:4px 10px;font-size:11px" onclick="catat(1)">Catat</button></td></tr>
+<tr><td>+ Soda (basa)</td><td id="pH2">&mdash;</td><td><button class="btn" style="padding:4px 10px;font-size:11px" onclick="catat(2)">Catat</button></td></tr>
+</table>
+<div id="info2"></div>
+</div>
+<button class="btn" onclick="tabGo(3)">Lanjut Misi 3 &#10132;</button>
+</div>
+</section>
+
+<!-- ================= MISI 3 ================= -->
+<section class="misi" id="m3">
+<div class="panel">
+<h2>&#129523; Misi 3 &mdash; Mordanting (Fiksasi Warna dengan Tawas)</h2>
+<p class="sub">Mordant mengikat pigmen ke serat kain. Target kualitas ikatan <b>&ge; 80%</b> agar tahan cuci.</p>
+<div class="card">
+  <div class="row"><label>&#129370; Dosis tawas: <span class="val" id="vTawas">5% massa kain</span></label>
+  <input type="range" id="tawas" min="2" max="20" step="1" value="5" oninput="updM()"></div>
+  <div class="row"><label>&#9201;&#65039; Durasi rendam: <span class="val" id="vRendam">20 menit</span></label>
+  <input type="range" id="rendam" min="5" max="60" step="5" value="20" oninput="updM()"></div>
+  <div class="alatwrap">
+    <div class="kainMini" id="kainPre">&#129526;</div>
+    <div style="display:inline-block;vertical-align:bottom;padding:0 10px;">
+      <button class="btn hijau" onclick="doMordant()">&#129523; Mulai Mordanting</button>
+      <div id="hasilM" style="margin-top:9px;text-align:left;"></div>
+    </div>
+  </div>
+  <div class="info">&#128161; Dosis ideal <b>5&ndash;10% massa kain</b>, rendam <b>20&ndash;30 menit</b>. Terlalu sedikit = luntur; terlalu banyak = kain keras &amp; limbah tinggi.</div>
+</div>
+<button class="btn" onclick="tabGo(4)">Lanjut Misi 4 &#10132;</button>
+</div>
+</section>
+
+<!-- ================= MISI 4 ================= -->
+<section class="misi" id="m4">
+<div class="panel">
+<h2>&#127912; Misi 4 &mdash; Batik Mini Motif Mega Mendung</h2>
+<p class="sub">Rahasia Mega Mendung Cirebon: <b>celup berlapis 3&times;</b> = gradasi awan. Malam (perintang) menahan warna &rarr; bagian tertutup tetap terang. Warna biru asli dari nila; di sini adaptasi pewarna buah &mdash; cantumkan atribusi Cirebon!</p>
+<div class="row" style="text-align:center">
+  <button class="btn" id="tek1" onclick="setTeknik('cap')">&#9729;&#65039; Cap Awan (klik kain)</button>
+  <button class="btn" id="tek2" onclick="setTeknik('jumput')">&#127744; Jumputan (klik kain)</button>
+  <button class="btn" id="tek3" onclick="setTeknik('canting')">&#12300;&#12301; Canting Garis (klik kain)</button>
+</div>
+<div class="alatwrap">
+  <div class="kain" id="kain" onclick="klikKain(event)"><span class="kaininfo">kain katun mini 25&times;25 cm &mdash; klik untuk memberi malam</span></div>
+  <div style="display:inline-block;vertical-align:bottom;padding:0 10px;text-align:left;">
+    <p style="font-size:12.5px;margin:4px 0;">Pewarna: <b id="nmE4">&mdash;</b></p>
+    <button class="btn" id="dip1" onclick="celup(1)" disabled>&#129684; Celup Lapis 1</button><br>
+    <button class="btn" id="dip2" onclick="celup(2)" disabled style="margin-top:6px;">&#129684; Celup Lapis 2</button><br>
+    <button class="btn" id="dip3" onclick="celup(3)" disabled style="margin-top:6px;">&#129684; Celup Lapis 3</button><br>
+    <button class="btn kuning" onclick="lumur()" style="margin-top:10px;">&#9832;&#65039; Lumurkan Malam &amp; Jemur</button>
+  </div>
+</div>
+<div id="hasilB"></div>
+<button class="btn" style="margin-top:10px" onclick="tabGo(5)">Lanjut Misi 5 &#10132;</button>
+</div>
+</section>
+
+<!-- ================= MISI 5 ================= -->
+<section class="misi" id="m5">
+<div class="panel">
+<h2>&#129380; Misi 5 &mdash; Uji Ketahanan, Kuis &amp; Laporan</h2>
+<p class="sub">Buktikan karyamu dengan data! Salin hasil ke LK4 &amp; LK5.</p>
+
+<div class="card"><h3>A. Uji Cuci (3&times; sabun netral)</h3>
+  <button class="btn" onclick="cuci()">&#129533; Cuci sekali</button>
+  Retensi warna: <b id="vRet">100%</b>
+  <div class="persen"><div id="barRet"></div></div>
+  <div id="logCuci" style="font-size:12.3px;color:#5b6b7c;"></div>
+</div>
+
+<div class="card"><h3>B. Uji Sinar Matahari</h3>
+  <button class="btn" onclick="sinarm()">&#9728;&#65039; Jemur 1 hari (klik 3&times;)</button>
+  Hari ke-<b id="vHari">0</b> &mdash; skor warna: <b id="vSun">5.0</b>/5
+  <div id="logSun" style="font-size:12.3px;color:#5b6b7c;margin-top:4px;"></div>
+</div>
+
+<div class="card"><h3>C. Kuis Pemahaman (5 soal)</h3>
+  <div id="soal"></div>
+  <button class="btn hijau" onclick="koreksi()">&#10004; Kirim Jawaban</button>
+  <div id="hasilKuis" style="margin-top:8px;font-weight:bold;"></div>
+</div>
+
+<div class="card"><h3>D. Laporan Otomatis &rarr; salin ke LK4/LK5</h3>
+  <textarea id="report" readonly></textarea><br>
+  <button class="btn kuning" style="margin-top:8px" onclick="genReport()">&#128196; Buat Laporan</button>
+  <button class="btn hijau" style="margin-top:8px" onclick="salinReport()">&#128203; Salin Laporan</button>
+</div>
+</div>
+</section>
+
+</div><!-- /kiri -->
+
+<!-- ================= JURNAL ================= -->
+<div class="kanan">
+<div class="panel">
+<h3 style="color:#1f4e79;margin:0 0 8px 0;">&#128210; Jurnal Data (otomatis)</h3>
+<div id="daftarj"><i>Belum ada data. Mulai Misi 1&hellip;</i></div>
+<div class="persen" style="margin-top:12px;"><div id="barPro"></div></div>
+<p style="font-size:12px;margin:4px 0;" id="txtPro">Kemajuan proyek: 0%</p>
+<button class="btn" style="width:100%;" onclick="resetAll()">&#8634; Reset Simulasi</button>
+<div class="info" style="margin-top:12px;">&#9888;&#65039; Hasil lab maya = perkiraan matematis. Pewarna <b>tidak untuk dikonsumsi</b>. Lakukan praktik nyata dengan pengawasan guru.</div>
+</div>
+</div>
+<div class="clear"></div>
+</div>
+
+<footer>Lab Maya STEM &ldquo;Warna ti Limbah&rdquo; &bull; Ekstraksi &ndash; Mordanting &ndash; Batik Mega Mendung &bull; Kelas X Fase E &bull; Modul Kokurikuler STEAM (Kimia&ndash;Biologi&ndash;Matematika&ndash;Seni Budaya) &bull; Berjalan offline</footer>
+
+<div id="toast"></div>
+
+<noscript><div style="max-width:900px;margin:20px auto;padding:14px;background:#fff0f0;border:2px solid #e03131;border-radius:10px;font-weight:bold;">
+JavaScript tidak aktif di browser Anda. Aktifkan JavaScript atau gunakan Chrome/Edge/Firefox terbaru.
+</div></noscript>
+
+<script>
+/* ============ DATA ============ */
+var PIG={
+ manggis:{nama:"Ekstrak Kulit Manggis",pigmen:"Antosianin",base:"#6b2140",asam:"#c2255c",basa:"#2f9e44",
+  nBase:"Ungu tua",nAsam:"Merah magenta",nBasa:"Hijau kebiruan",
+  info:"Antosianin sangat peka pH: merah di asam, hijau kebiruan di basa. Suhu di atas 90\u00B0C merusaknya.",stabil:0.72,vivid:0.92},
+ naga:{nama:"Ekstrak Buah Naga Merah",pigmen:"Betasianin",base:"#d6336c",asam:"#ef5d94",basa:"#b98a2d",
+  nBase:"Magenta cerah",nAsam:"Pink terang",nBasa:"Kuning kecoklatan",
+  info:"Betasianin cukup tahan panas, magenta cerah; di larutan basa bergeser ke kuning kecoklatan.",stabil:0.85,vivid:0.97},
+ jeruk:{nama:"Ekstrak Kulit Jeruk",pigmen:"Karotenoid",base:"#e8a302",asam:"#e08a01",basa:"#d99a02",
+  nBase:"Kuning cerah",nAsam:"Kuning cerah (nyaris tetap)",nBasa:"Oranye kecoklatan (sedikit berubah)",
+  info:"Karotenoid stabil terhadap pH (warna hampir tidak berubah), tetapi kurang pekat pada kain.",stabil:0.90,vivid:0.78}
+};
+var LEVEL=[0,0.18,0.45,0.72];
+var S={peel:null,massa:100,air:250,suhu:60,waktu:15,stove:false,strength:0,volume:0,
+ pH:[null,null,null],tawas:5,rendam:20,mordQ:0,teknik:"cap",dips:0,batik:false,
+ ret:100,nCuci:0,hari:0,sun:5,kuisDone:false,skorKuis:0,skor:0,un2:false,un3:false,un4:false,un5:false};
+var nAsam=0,nBasa=0,bubbleTimer=null,toastTimer=null;
+
+function $(id){return document.getElementById(id);}
+function toast(t){var e=$('toast');e.innerHTML=t;e.className='show';
+ if(toastTimer)clearTimeout(toastTimer);
+ toastTimer=setTimeout(function(){e.className='';},2600);}
+function jurnal(t){var d=$('daftarj');
+ if(d.innerHTML.indexOf('Belum ada data')>-1){d.innerHTML='';}
+ var x=document.createElement('div');x.innerHTML=t;
+ d.insertBefore(x,d.firstChild);}
+function addSkor(n){S.skor+=n;if(S.skor>100)S.skor=100;$('skorB').innerHTML='\u2B50 Skor: '+S.skor;}
+function progress(){var p=0;
+ if(S.strength>0)p+=20;
+ if(S.pH[0]&&S.pH[1]&&S.pH[2])p+=20;
+ if(S.mordQ>0)p+=20;
+ if(S.batik)p+=20;
+ if(S.kuisDone)p+=20;
+ $('barPro').style.width=p+'%';$('txtPro').innerHTML='Kemajuan proyek: '+p+'%';}
+function isUnlocked(i){return i===1||S['un'+i];}
+function unlock(i){S['un'+i]=true;$('tab'+i).className='tab';}
+function tabGo(n){
+ var msg='';
+ if(n===2&&!S.un2){msg='Selesaikan Misi 1 (ekstraksi) dulu!';}
+ else if(n===3&&!S.un3){msg='Butuh ekstrak dulu (Misi 1)!';}
+ else if(n===4&&!S.un4){msg='Selesaikan mordanting (Misi 3) dulu!';}
+ else if(n===5&&!S.un5){msg='Selesaikan batik mini (Misi 4) dulu!';}
+ else msg='';
+ if(msg!==''){toast(msg);return;}
+ for(var i=1;i<=5;i++){
+  $('m'+i).style.display=(i===n)?'block':'none';
+  $('tab'+i).className='tab'+(i===n?' aktif':'')+((i>1&&!isUnlocked(i))?' lock':'');
+ }
+ window.scrollTo(0,0);}
+
+/* ============ WARNA ============ */
+function hexToRgb(h){return[parseInt(h.substr(1,2),16),parseInt(h.substr(3,2),16),parseInt(h.substr(5,2),16)];}
+function mixHex(a,b,t){var A=hexToRgb(a),B=hexToRgb(b);
+ return'rgb('+Math.round(A[0]+(B[0]-A[0])*t)+','+Math.round(A[1]+(B[1]-A[1])*t)+','+Math.round(A[2]+(B[2]-A[2])*t)+')';}
+function warnaLevel(l){if(!S.peel)return'#fdf6f0';
+ var sat=Math.max(0.25,S.strength/100);
+ return mixHex('#fdf6f0',PIG[S.peel].base,LEVEL[l]*sat);}
+
+/* ============ MISI 1 ============ */
+function pilihBuah(k){S.peel=k;
+ var ids=['manggis','naga','jeruk'];
+ for(var i=0;i<ids.length;i++){
+  var el=$('b-'+ids[i]);
+  el.style.borderColor=(ids[i]===k)?'#2e9e5b':'transparent';
+  el.style.background=(ids[i]===k)?'#effaf3':'#fdf6ee';}
+ jurnal('\uD83C\uDF31 Bahan dipilih: '+PIG[k].nama+' (pigmen '+PIG[k].pigmen+')');
+ upd();toast('Bahan dipilih: '+PIG[k].nama);}
+function upd(){
+ S.massa=parseInt($('massa').value,10);S.air=parseInt($('air').value,10);
+ S.suhu=parseInt($('suhu').value,10);S.waktu=parseInt($('waktu').value,10);
+ $('vMassa').innerHTML=S.massa+' g';$('vAir').innerHTML=S.air+' mL';
+ $('vSuhu').innerHTML=S.suhu+' \u00B0C';$('vWaktu').innerHTML=S.waktu+' menit';
+ var r=S.air/S.massa;$('vRasio').innerHTML='1 : '+r.toFixed(1);
+ $('infoRasio').innerHTML=(r>=2&&r<=3)
+  ?'\u2705 Rasio ideal (1:2\u20131:3). Pigmen optimal keluar.'
+  :'\u26A0\uFE0F Rasio di luar 1:2\u20131:3. Kekuatan warna akan berkurang.';}
+function buatGelembung(){var c=$('cair1');var b=document.createElement('div');
+ b.className='bubble';b.style.left=(8+Math.random()*115)+'px';
+ c.appendChild(b);
+ setTimeout(function(){if(b.parentNode)b.parentNode.removeChild(b);},1700);}
+function toggleStove(){
+ if(!S.peel){toast('Pilih kulit buah dulu (Langkah 1)!');return;}
+ S.stove=!S.stove;var c=$('cair1');
+ if(S.stove){
+  c.style.height='62%';
+  c.style.background=mixHex('#fdf6f0',PIG[S.peel].base,0.35);
+  $('tStove').innerHTML='\uD83E\uDEF8 Matikan Kompor';
+  $('etiket1').innerHTML='DIPANAS '+S.suhu+'\u00B0C \u2022 '+S.waktu+' mnt';
+  $('tSaring').disabled=false;
+  if(bubbleTimer)clearInterval(bubbleTimer);
+  bubbleTimer=setInterval(buatGelembung,300);
+  toast('Mendidih perlahan\u2026 pigmen larut ke air!');
+ }else{
+  $('tStove').innerHTML='\uD83D\uDD25 Nyalakan Kompor';
+  $('etiket1').innerHTML='DIPANAS (berhenti)';
+  if(bubbleTimer)clearInterval(bubbleTimer);}}
+function saring(){
+ if(!S.peel){toast('Pilih bahan dulu!');return;}
+ if(bubbleTimer)clearInterval(bubbleTimer);
+ var P=PIG[S.peel],r=S.air/S.massa;
+ var fT=Math.exp(-Math.pow(S.suhu-75,2)/(2*20*20));
+ if(S.suhu>90&&S.peel!=='jeruk'){fT=fT*0.55;}
+ var fW=Math.exp(-Math.pow(S.waktu-18,2)/(2*7*7));
+ if(S.waktu>28&&S.peel!=='jeruk'){fW=fW*0.6;}
+ var fR=(r>=2&&r<=3)?1:Math.max(0.5,1-Math.abs(r-2.5)*0.3);
+ S.strength=Math.round(P.vivid*100*(0.35+0.65*fT)*fW*fR);
+ S.volume=Math.round(S.air*0.85);
+ var c2=$('cair2');c2.style.height='55%';
+ c2.style.background=mixHex('#fdf6f0',P.base,Math.min(0.85,S.strength/100*0.9));
+ $('etiket2').innerHTML='EKSTRAK '+S.volume+' mL';
+ $('nmE2').innerHTML=P.nama;
+ $('nmE4').innerHTML=P.nama+' (kekuatan '+S.strength+'%)';
+ var msg,cls;
+ if(S.strength>=80){msg='\uD83C\uDF89 Ekstraksi OPTIMAL! Kekuatan warna '+S.strength+'%. Pigmen '+P.pigmen+' larut maksimal.';cls='ijo';}
+ else if(S.strength>=60){msg='\uD83D\uDC4D Cukup ('+S.strength+'%). Tip: suhu \u00B175\u00B0C, durasi 15\u201320 menit, rasio 1:2\u20131:3.';cls='';}
+ else{msg='\u26A0\uFE0F Lemah ('+S.strength+'%). '+(S.suhu>90?'Suhu >90\u00B0C merusak pigmen! ':'')+'Atur ulang, panaskan & saring lagi.';cls='merah';}
+ $('hasilE').innerHTML='<div class="info '+cls+'">'+msg+'</div>';
+ jurnal('\uD83E\uDED7 Ekstraksi: '+S.massa+' g + '+S.air+' mL (1:'+r.toFixed(1)+'), '+S.suhu+'\u00B0C, '+S.waktu+' mnt \u2192 '+S.volume+' mL, kekuatan '+S.strength+'%');
+ unlock(2);unlock(3);
+ addSkor(S.strength>=80?20:(S.strength>=60?12:6));
+ progress();toast('Ekstrak siap! Kekuatan: '+S.strength+'%');}
+
+/* ============ MISI 2 ============ */
+function warnaSekarang(){var P=PIG[S.peel];
+ if(nAsam>=3)return{c:P.asam};if(nBasa>=3)return{c:P.basa};
+ if(nAsam>0)return{c:mixHex(P.base,P.asam,0.5)};
+ if(nBasa>0)return{c:mixHex(P.base,P.basa,0.5)};
+ return{c:P.base};}
+function tetes(t){
+ if(!S.peel||S.strength<=0){toast('Selesaikan Misi 1 dulu!');return;}
+ if(t==='asam')nAsam++;else nBasa++;
+ var w=warnaSekarang();
+ $('cair3').style.height='48%';$('cair3').style.background=w.c;
+ $('etiket3').innerHTML=(nAsam>=3)?'pH ASAM (\u00B13)':(nBasa>=3)?'pH BASA (\u00B19)':'sedang bereaksi\u2026';}
+function resetpH(){nAsam=0;nBasa=0;
+ $('cair3').style.height='0';$('etiket3').innerHTML='pH NETRAL';}
+function catat(i){
+ if(!S.peel||S.strength<=0){toast('Belum ada ekstrak!');return;}
+ var P=PIG[S.peel];
+ if(i===1&&nAsam<3){toast('Teteskan cuka minimal 3\u00D7 dulu!');return;}
+ if(i===2&&nBasa<3){toast('Teteskan soda minimal 3\u00D7 dulu!');return;}
+ var w=(i===0)?P.nBase:(i===1)?P.nAsam:P.nBasa;
+ $('pH'+i).innerHTML=w;S.pH[i]=w;
+ $('info2').innerHTML='<div class="info">\uD83D\uDD2C <b>Penjelasan kimia:</b> '+P.info+'</div>';
+ if(S.pH[0]&&S.pH[1]&&S.pH[2]){
+  jurnal('\uD83D\uDCCA Uji pH '+P.nama+': asli='+P.nBase+', asam='+P.nAsam+', basa='+P.nBasa);
+  if(!S._skorpH){S._skorpH=1;addSkor(20);}
+  progress();toast('Tabel pH lengkap! Lanjut Misi 3.');
+ }else toast('Tercatat: '+w);}
+
+/* ============ MISI 3 ============ */
+function updM(){
+ S.tawas=parseInt($('tawas').value,10);S.rendam=parseInt($('rendam').value,10);
+ $('vTawas').innerHTML=S.tawas+'% massa kain';$('vRendam').innerHTML=S.rendam+' menit';}
+function doMordant(){
+ if(S.strength<=0){toast('Butuh ekstrak dulu (Misi 1)!');return;}
+ var fD=Math.exp(-Math.pow(S.tawas-7,2)/(2*4*4));
+ var fT=Math.exp(-Math.pow(S.rendam-25,2)/(2*14*14));
+ S.mordQ=Math.round(100*Math.max(0.15,fD*fT));
+ $('kainPre').style.background='#cfe8d8';
+ $('kainPre').style.fontSize='12px';$('kainPre').innerHTML='\uD83E\uDDF5 tawas menempel';
+ var msg,cls;
+ if(S.mordQ>=80){msg='\u2705 Mordanting OPTIMAL ('+S.mordQ+'%). Ion aluminium tawas menjembatani pigmen dengan serat kain.';cls='ijo';}
+ else if(S.mordQ>=60){msg='\uD83D\uDE42 Cukup ('+S.mordQ+'%). Rapikan dosis/durasi agar lebih tahan cuci.';cls='';}
+ else{msg='\u26A0\uFE0F Lemah ('+S.mordQ+'%). '+(S.tawas<5?'Dosis tawas kurang. ':(S.tawas>12?'Tawas berlebih \u2014 kain keras & limbah tinggi. ':''))+'Durasi ideal \u00B125 menit.';cls='merah';}
+ $('hasilM').innerHTML='<div class="info '+cls+'">'+msg+'</div>';
+ jurnal('\uD83E\uDDF4 Mordanting: tawas '+S.tawas+'% massa kain, rendam '+S.rendam+' mnt \u2192 ikatan '+S.mordQ+'%');
+ unlock(4);$('dip1').disabled=false;
+ if(S.mordQ>=80&&!S._skorM){S._skorM=1;addSkor(20);}
+ progress();toast('Kain siap dibatik! Ikatan: '+S.mordQ+'%');}
+
+/* ============ MISI 4 ============ */
+function setTeknik(t){S.teknik=t;
+ var map={cap:'tek1',jumput:'tek2',canting:'tek3'};
+ for(var k in map){$(map[k]).style.outline=(k===t)?'3px solid #f59f00':'none';}
+ if(t==='cap')toast('Mode Cap Awan: klik pada kain untuk mengecap malam \u2601\uFE0F');
+ if(t==='jumput')toast('Mode Jumputan: klik kain \u2192 ikatan bundar otomatis \uD83C\uDF30');
+ if(t==='canting')toast('Mode Canting: setiap klik membuat satu garis malam');}
+function klikKain(ev){
+ if(S.strength<=0){toast('Butuh ekstrak dulu (Misi 1)!');return;}
+ if(!S.un4){toast('Mordanting dulu (Misi 3)!');return;}
+ var k=$('kain'),r=k.getBoundingClientRect();
+ var x=ev.clientX-r.left,y=ev.clientY-r.top;
+ if(S.teknik==='cap')capAwan(x,y);
+ else if(S.teknik==='jumput')jumput(x,y);
+ else garis(x,y);}
+function capAwan(x,y){var w=warnaLevel(S.dips);
+ var d=document.createElement('div');d.className='awan';
+ d.style.left=(x-42)+'px';d.style.top=(y-22)+'px';d.style.background=w;
+ $('kain').appendChild(d);
+ jurnal('\u2601\uFE0F Cap awan ditekap (kain saat itu: sebelum lapisan '+(S.dips+1)+')');}
+function jumput(x,y){var w=warnaLevel(S.dips);
+ var d=document.createElement('div');d.className='ring';
+ d.style.left=(x-32)+'px';d.style.top=(y-32)+'px';
+ d.style.border='10px solid '+w;
+ $('kain').appendChild(d);}
+function garis(x,y){var w=warnaLevel(S.dips);
+ var d=document.createElement('div');d.className='garisW';
+ d.style.left=(x-32)+'px';d.style.top=(y-6)+'px';d.style.background=w;
+ var ang=Math.round(Math.random()*40-20);
+ d.style.transform='rotate('+ang+'deg)';
+ $('kain').appendChild(d);}
+function celup(n){
+ if(S.strength<=0){toast('Butuh ekstrak dulu!');return;}
+ if(n!==S.dips+1){toast('Lakukan celup lapisan '+(S.dips+1)+' dulu!');return;}
+ S.dips=n;
+ $('kain').style.background=warnaLevel(n);
+ if(n<3){$('dip'+(n+1)).disabled=false;}
+ jurnal('\uD83E\uDE74 Celup lapisan '+n+' \u2192 dasar kain makin gelap (gradasi berlapis khas Mega Mendung)');
+ if(n===3){if(!S._skorD){S._skorD=1;addSkor(20);}toast('3 lapisan selesai! Tekan \u2692\uFE0F Lumurkan Malam.');}}
+function lumur(){
+ if(S.dips===0){toast('Celup dulu minimal 1 lapisan!');return;}
+ S.batik=true;
+ var tipis=(S.dips<3)?' Coba 3 lapisan agar gradasi khas Mega Mendung maksimal!':'';
+ $('hasilB').innerHTML='<div class="info ijo">\uD83C\uDFA8 Karya selesai! Bagian yang tertutup malam (awan/ring/garis) tampak <b>lebih terang</b> dari dasar kain = efek gradasi khas Mega Mendung versi pewarna buah.'+tipis+' Cantumkan <b>atribusi budaya Cirebon</b> di kartu produkmu.</div>';
+ jurnal('\u2692\uFE0F Malam dilumurkan. Karya final: '+S.dips+' lapisan celup, teknik '+S.teknik);
+ unlock(5);
+ if(!S._skorB2){S._skorB2=1;addSkor(20);}
+ progress();}
+
+/* ============ MISI 5 ============ */
+function cuci(){
+ if(!S.batik){toast('Selesaikan batik mini dulu (Misi 4)!');return;}
+ if(S.nCuci>=3){toast('Uji cuci sudah 3\u00D7 \u2014 lihat hasil akhir.');return;}
+ S.nCuci++;
+ var P=PIG[S.peel];
+ var loss=Math.round((1-S.mordQ/100)*14+(1-P.stabil)*9+Math.random()*2);
+ S.ret=Math.max(35,S.ret-loss);
+ $('vRet').innerHTML=S.ret+'%';$('barRet').style.width=S.ret+'%';
+ $('logCuci').innerHTML='Cuci ke-'+S.nCuci+': kehilangan \u00B1'+loss+'% \u2192 retensi '+S.ret+'%.'+(S.nCuci>=3?' <b>Uji selesai!</b>':'');
+ jurnal('\uD83E\uDDFC Uji cuci ke-'+S.nCuci+': retensi warna '+S.ret+'%');
+ progress();}
+function sinarm(){
+ if(!S.batik){toast('Selesaikan batik dulu!');return;}
+ if(S.hari>=3){toast('Paparan maksimal 3 hari.');return;}
+ S.hari++;
+ var P=PIG[S.peel];
+ var v=5-(S.hari*(1-P.stabil)*1.2);
+ S.sun=Math.max(2.5,Math.round(v*10)/10);
+ $('vHari').innerHTML=S.hari;$('vSun').innerHTML=S.sun.toFixed(1);
+ $('logSun').innerHTML='Paparan '+S.hari+' hari: skor '+S.sun.toFixed(1)+'/5. '+(S.sun>=4?'Tahan sinar \uD83D\uDC4D':'Catat sebagai keterbatasan produk (jujur!).');
+ jurnal('\u2600\uFE0F Uji sinar '+S.hari+' hari: skor '+S.sun.toFixed(1)+'/5');
+ progress();}
+
+/* ============ KUIS ============ */
+var SOAL=[
+ {q:'1. Pigmen utama pada kulit manggis adalah\u2026',o:['Antosianin','Klorofil','Karotenoid','Melanin'],a:0},
+ {q:'2. Ekstrak manggis memerah saat ditetesi cuka karena\u2026',o:['Cuka melarutkan gula','Cuka mendinginkan larutan','pH asam mengubah struktur antosianin','Cuka menambah oksigen'],a:2},
+ {q:'3. Fungsi tawas pada mordanting adalah\u2026',o:['Mengikat pigmen ke serat kain','Mewarnai kain lebih merah','Membuat kain lebih lunak','Menghilangkan bau'],a:0},
+ {q:'4. Kondisi ekstraksi terbaik untuk antosianin adalah\u2026',o:['100\u00B0C, 40 menit','30\u00B0C, 5 menit','100\u00B0C, 5 menit','\u00B175\u00B0C, 15\u201320 menit'],a:3},
+ {q:'5. Celup berlapis pada Mega Mendung bertujuan\u2026',o:['Menghemat pewarna','Membentuk gradasi warna awan','Mempercepat pengeringan','Mengikat serat kain'],a:1}];
+function renderSoal(){var h='';
+ for(var i=0;i<SOAL.length;i++){var s=SOAL[i];
+  h+='<p class="qs">'+s.q+'</p>';
+  for(var j=0;j<s.o.length;j++){
+   h+='<label class="op"><input type="radio" name="q'+i+'" value="'+j+'"> '+s.o[j]+'</label>';}}
+ $('soal').innerHTML=h;}
+function koreksi(){var benar=0;
+ for(var i=0;i<SOAL.length;i++){
+  var cek=document.getElementsByName('q'+i);
+  for(var j=0;j<cek.length;j++){
+   if(cek[j].checked&&parseInt(cek[j].value,10)===SOAL[i].a){benar++;}}}
+ S.kuisDone=true;S.skorKuis=benar;
+ $('hasilKuis').innerHTML='Skor kuis: '+benar+'/5. '+(benar>=4?'Hebat! Kamu siap praktik nyata \uD83C\uDF1F':'Baca ulang info kimia di tiap misi, lalu coba lagi.');
+ if(benar>=4&&!S._skorK){S._skorK=1;addSkor(20);}
+ jurnal('\uD83E\uDDE0 Kuis: '+benar+'/5 benar');
+ progress();}
+
+/* ============ LAPORAN ============ */
+function genReport(){
+ var P=S.peel?PIG[S.peel]:{nama:'-',pigmen:'-'};
+ var r=(S.massa>0)?(S.air/S.massa).toFixed(1):'-';
+ var t='';
+ t+='=== LAPORAN LAB MAYA - WARNA TI LIMBAH ===\n';
+ t+='Nama/Kelas : ....................  Kelompok: ............\n';
+ t+='Bahan      : '+P.nama+' (pigmen '+P.pigmen+')\n';
+ t+='[Ekstraksi] '+S.massa+' g + '+S.air+' mL (1:'+r+'), '+S.suhu+' C, '+S.waktu+' mnt\n';
+ t+='   -> volume '+S.volume+' mL | kekuatan warna '+S.strength+'%\n';
+ t+='[Uji pH]   asli: '+(S.pH[0]||'-')+' | +cuka: '+(S.pH[1]||'-')+' | +soda: '+(S.pH[2]||'-')+'\n';
+ t+='[Mordant]  tawas '+S.tawas+'% massa kain, rendam '+S.rendam+' mnt -> ikatan '+S.mordQ+'%\n';
+ t+='[Batik]    teknik '+S.teknik+', celup '+S.dips+' lapisan (adaptasi Mega Mendung Cirebon)\n';
+ t+='[Uji]      retensi cuci '+S.ret+'% ('+S.nCuci+'x) | uji sinar '+S.sun.toFixed(1)+'/5 ('+S.hari+' hari)\n';
+ t+='[Kuis]     '+S.skorKuis+'/5\n';
+ t+='Kesimpulan  : ..................................................\n';
+ t+='Keterbatasan: ..................................................';
+ $('report').value=t;
+ toast('Laporan dibuat! Salin ke LK4/LK5.');}
+function salinReport(){
+ var rp=$('report');
+ if(rp.value===''){toast('Tekan "Buat Laporan" dulu!');return;}
+ rp.focus();rp.select();
+ var ok=false;
+ try{ok=document.execCommand('copy');}catch(e){ok=false;}
+ if(ok){toast('Laporan disalin! Tempel di LK5 / Google Docs.');}
+ else{toast('Salin manual: teks sudah terblok, tekan Ctrl+C.');}}
+function resetAll(){if(confirm('Ulangi simulasi dari awal?')){location.reload();}}
+
+/* ============ INISIALISASI ============ */
+upd();updM();renderSoal();
+ $('statusJS').className='statusbar ok';
+ $('statusJS').innerHTML='\u2705 Sistem lab siap. Mulai dari Misi 1 \u2014 pilih salah satu kulit buah!';
+</script>
+</body>
+</html>
